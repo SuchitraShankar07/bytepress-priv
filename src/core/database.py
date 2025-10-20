@@ -1,5 +1,5 @@
 import pymongo
-from datetime import datetime
+from datetime import datetime, timezone
 from src.utils.config import MONGODB_URI, DATABASE_NAME, USERS_COLLECTION
 import json
 import os
@@ -191,8 +191,8 @@ def add_user(email: str, password_hash: str, name: str = None) -> dict:
                 "email": email,
                 "password": password_hash,
                 "name": name,
-                "created_at": datetime.utcnow().isoformat(),
-                "updated_at": datetime.utcnow().isoformat(),
+                "created_at": datetime.now(timezone.utc).isoformat(),
+                "updated_at": datetime.now(timezone.utc).isoformat(),
                 "preferences": {
                     "topics": [],
                     "frequency": "daily",
@@ -221,8 +221,8 @@ def add_user(email: str, password_hash: str, name: str = None) -> dict:
                 "email": email,
                 "password": password_hash,
                 "name": name,
-                "created_at": datetime.utcnow(),
-                "updated_at": datetime.utcnow(),
+                "created_at": datetime.now(timezone.utc),
+                "updated_at": datetime.now(timezone.utc),
                 "preferences": {
                     "topics": [],
                     "frequency": "daily",
@@ -281,7 +281,7 @@ def get_user(email: str) -> dict:
 def update_user(email: str, updates: dict) -> bool:
     """Update user information"""
     try:
-        updates["updated_at"] = datetime.utcnow()
+        updates["updated_at"] = datetime.now(timezone.utc)
         result = db.users.update_one(
             {"email": email},
             {"$set": updates}

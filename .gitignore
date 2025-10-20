@@ -5,7 +5,7 @@ __pycache__/
 
 # C extensions
 *.so
-
+diagnose_mongodb.py
 # Distribution / packaging
 .Python
 build/

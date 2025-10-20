@@ -59,7 +59,14 @@ def registration_page():
                         else:
                             # Handle specific error types
                             if result["error_type"] == "user_exists":
-                                st.error("❌ This email is already registered. Try logging in instead.")
+                                st.error("❌ This email is already registered.")
+                                col1, col2 = st.columns(2)
+                                with col1:
+                                    if st.button("🔐 Login Instead", type="primary"):
+                                        st.session_state.page = 'login'
+                                        st.rerun()
+                                with col2:
+                                    st.info("Use the login page to access your account.")
                             elif result["error_type"] == "database_error":
                                 st.error("😔 Something went wrong. Please try again later.")
                                 st.caption(f"Error details: {result['error']}")
@@ -67,6 +74,20 @@ def registration_page():
                                 st.error("😔 Something went wrong. Please try again later.")
     
     # Additional info
+    st.markdown("---")
+    
+    # Login option for existing users
+    col1, col2 = st.columns(2)
+    with col1:
+        st.markdown("**👋 Already have an account?**")
+        if st.button("🔐 Sign In Instead", use_container_width=True):
+            st.session_state.page = 'login'
+            st.rerun()
+    
+    with col2:
+        st.markdown("**❓ Need help?**")
+        st.markdown("Contact support for assistance")
+    
     st.markdown("---")
     st.markdown("### What happens next?")
     col1, col2 = st.columns(2)
