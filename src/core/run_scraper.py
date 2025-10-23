@@ -1,4 +1,7 @@
 from src.scraper.fetcher import fetch_articles
+from src.mailer.formatter import format_digest
+from src.mailer.sender import send_email
+
 
 def run_scraper(topics, max_articles=5, semantic_rerank=False):
     """
@@ -32,10 +35,15 @@ if __name__ == "__main__":
     # Run scraper
     all_results = run_scraper(topics_list, max_articles=5, semantic_rerank=True)
 
-    # Display results segregated topic-wise
-    for topic, articles in all_results.items():
-        print(f"\n📰 Top {len(articles)} articles for '{topic}':\n")
-        for i, art in enumerate(articles, 1):
-            print(f"{i}. {art['title']} ({art['source']})")
-            print(f"   {art['url']}\n")
+    # --- Format Digest ---
+    print("[2] Formatting digest for email...\n")
+    digest_html = format_digest(all_results)
+
+    # --- Send Email ---
+    print("[3] Sending email...\n")
+    recipient = "recipient@example.com"  # will later come from DB
+    subject = "🗞️ Your Daily BytePress Digest"
+    send_email(recipient, subject, digest_html)
+
+    print("\n✅ Digest email sent successfully!")
 
