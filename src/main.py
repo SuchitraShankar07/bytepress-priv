@@ -2,6 +2,7 @@ import streamlit as st
 from src.ui.register import registration_page
 from src.ui.login import login_page, check_authentication, logout_user, get_current_user
 from src.ui.dashboard import dashboard_page
+from src.ui.topics import manage_topics_page  # add manage topics nav
 
 st.set_page_config(page_title="Bytepress", layout="centered")
 
@@ -20,13 +21,15 @@ if is_logged_in:
     # Logged in user navigation
     st.sidebar.markdown(f"👋 Welcome, **{current_user.get('name', 'User')}**!")
     
-    nav_options = ["Dashboard", "Home", "Logout"]
-    default_index = 0 if st.session_state.page == 'dashboard' else (1 if st.session_state.page == 'home' else 0)
+    nav_options = ["Dashboard", "Manage Topics", "Home", "Logout"]
+    default_index = nav_options.index(st.session_state.page) if st.session_state.page in nav_options else 0
     sidebar_choice = st.sidebar.selectbox("Quick Navigation", nav_options, index=default_index)
     
     # Handle navigation
     if sidebar_choice == "Dashboard":
         st.session_state.page = 'dashboard'
+    elif sidebar_choice == "Manage Topics":
+        st.session_state.page = 'manage_topics'
     elif sidebar_choice == "Home":
         st.session_state.page = 'home'
     elif sidebar_choice == "Logout":
@@ -51,6 +54,10 @@ if st.session_state.page == 'home':
     # Header with better styling
     st.markdown("# 📰 Bytepress")
     st.markdown("### *Your Personalized News Companion*")
+    
+    # One-time success flash after registration
+    if "flash_success" in st.session_state:
+        st.success(st.session_state.pop("flash_success"))
     
     # Hero section
     st.markdown("---")
@@ -136,5 +143,14 @@ elif st.session_state.page == 'dashboard':
         dashboard_page()
     else:
         st.error("🔒 Please log in to access the dashboard.")
+        st.session_state.page = 'login'
+        st.rerun()
+
+elif st.session_state.page == 'manage_topics':
+    # Manage Topics page (only accessible if logged in)
+    if is_logged_in:
+        manage_topics_page()
+    else:
+        st.error("🔒 Please log in to access the Manage Topics page.")
         st.session_state.page = 'login'
         st.rerun()
